@@ -893,6 +893,9 @@ tls_ocsp_query_async(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *conf
 	}
 	return tls_ocsp_evloop(ctx, fd_p, config);
 failed:
+	free(ctx->ocsp_query->ocsp_url);
+	free(ctx->ocsp_query->request_data);
+	free(ctx->ocsp_query);
 	tls_free(ctx);
 	return -1;
 }
@@ -909,7 +912,8 @@ tls_ocsp_common_query(struct tls **ocsp_ctx_p, int *fd_p, struct tls_config *con
 
 	/* sync path */
 	while (1) {
-		ret = tls_ocsp_query_async(&ctx, &fd, config, target);
+		if (ctx)
+			ret = tls_ocsp_query_async(&ctx, &fd, config, target);
 		if (ret != TLS_WANT_POLLIN && ret != TLS_WANT_POLLOUT)
 			break;
 		ret = tls_ocsp_do_poll(ctx, ret, fd);
