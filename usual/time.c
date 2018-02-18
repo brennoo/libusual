@@ -37,10 +37,12 @@ char *format_time_ms(usec_t time, char *dst, unsigned dstlen)
 
 	sec = tv.tv_sec;
 	tm = localtime_r(&sec, &tmbuf);
-	snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
-		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-		 tm->tm_hour, tm->tm_min, tm->tm_sec,
-		 (int)(tv.tv_usec / 1000));
+	if (tm != NULL) {
+		snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
+			tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+			tm->tm_hour, tm->tm_min, tm->tm_sec,
+			(int)(tv.tv_usec / 1000));
+	}
 	return dst;
 }
 
@@ -56,9 +58,11 @@ char *format_time_s(usec_t time, char *dst, unsigned dstlen)
 		s = time / USEC;
 	}
 	tm = localtime_r(&s, &tbuf);
-	snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d",
-		 tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-		 tm->tm_hour, tm->tm_min, tm->tm_sec);
+	if (tm != NULL) {
+		snprintf(dst, dstlen, "%04d-%02d-%02d %02d:%02d:%02d",
+			tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+			tm->tm_hour, tm->tm_min, tm->tm_sec);
+	}
 	return dst;
 }
 

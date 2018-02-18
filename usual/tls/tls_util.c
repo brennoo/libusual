@@ -139,7 +139,7 @@ tls_load_file(const char *name, size_t *len, char *password)
 
 	/* Or read the (possibly) encrypted key from file */
 	if ((fp = fdopen(fd, "r")) == NULL)
-		goto fail;
+		return (NULL);
 	fd = -1;
 
 	key = PEM_read_PrivateKey(fp, NULL, tls_password_cb, password);
@@ -167,7 +167,7 @@ tls_load_file(const char *name, size_t *len, char *password)
 
  fail:
 	free(buf);
-	if (fd != -1)
+	if (fd)
 		close(fd);
 	if (bio != NULL)
 		BIO_free_all(bio);
